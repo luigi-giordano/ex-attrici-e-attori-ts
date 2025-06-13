@@ -26,6 +26,14 @@
 
 // Utilizza un type guard chiamato isActress per assicurarti che la struttura del dato ricevuto sia corretta.
 
+// 📌 Milestone 4
+// Crea una funzione getAllActresses che chiama:
+
+// GET /actresses
+// La funzione deve restituire un array di oggetti Actress.
+
+// Può essere anche un array vuoto.
+
 type Person = {
   readonly id: number,
   readonly name: string,
@@ -89,5 +97,30 @@ async function getActress(id: number): Promise<Actress | null> {
       console.error('Errore sconosciuto:', error);
     }
     return null;
+  }
+}
+
+async function getAllActresses(): Promise<Actress[]> {
+  try {
+    const response = await fetch(`http://localhost:3333/actresses`);
+    if (!response.ok) {
+      throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`);
+    }
+    const dato: unknown = await response.json();
+
+    if (!(dato instanceof Array)) {
+      throw new Error('Formato dati non valido: deve essere un Array!');
+    }
+
+    const attriciValide: Actress[] = dato.filter(actress => isActress(actress));
+    return attriciValide;
+
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Errore non riesco a recuperare le attrici:', error);
+    } else {
+      console.error('Errore sconosciuto:', error);
+    }
+    return [];
   }
 }
